@@ -1,4 +1,4 @@
-module github.com/weiihann/clickhouse-connector/golang
+module github.com/weiihann/clickhouse-connector
 
 go 1.24.5
 

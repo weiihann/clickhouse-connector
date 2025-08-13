@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/weiihann/clickhouse-connector/golang/clickhouse"
+	"github.com/weiihann/clickhouse-connector/clickhouse"
 )
 
 func main() {
