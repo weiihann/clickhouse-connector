@@ -99,6 +99,20 @@ func (c *Client) QueryRow(ctx context.Context, query string, args ...interface{}
 	return c.conn.QueryRowContext(ctx, query, args...)
 }
 
+func (c *Client) GetMaxBlock(ctx context.Context) (uint64, error) {
+	query := `
+		SELECT max(last_access_block) FROM default.accounts_last_access
+	`
+
+	row := c.QueryRow(ctx, query)
+	var maxBlock uint64
+	if err := row.Scan(&maxBlock); err != nil {
+		return 0, err
+	}
+
+	return maxBlock, nil
+}
+
 func (c *Client) ExecOnExpiredAccounts(ctx context.Context, expBlock uint64, execFn func(address string)) error {
 	query := `
 		SELECT address FROM default.accounts_last_access FINAL
