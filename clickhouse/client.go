@@ -143,7 +143,7 @@ func (c *Client) ExecOnExpiredAccounts(ctx context.Context, expBlock uint64, exe
 func (c *Client) ExecOnExpiredSlots(ctx context.Context, expBlock uint64, execFn func(address, slot string)) error {
 	query := `
 		SELECT address, slot_key FROM default.storage_last_access FINAL
-		WHERE last_access_block < ?
+		WHERE last_access_block < ? AND is_deleted = false
 	`
 
 	rows, err := c.Query(ctx, query, expBlock)
