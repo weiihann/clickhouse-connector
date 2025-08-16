@@ -113,13 +113,13 @@ func (c *Client) GetMaxBlock(ctx context.Context) (uint64, error) {
 	return maxBlock, nil
 }
 
-func (c *Client) ExecOnExpiredAccounts(ctx context.Context, expBlock uint64, execFn func(address string)) error {
+func (c *Client) ExecOnExpiredAccounts(ctx context.Context, startBlock, endBlock uint64, execFn func(address string)) error {
 	query := `
 		SELECT address FROM default.accounts_last_access FINAL
-		WHERE last_access_block < ?
+		WHERE last_access_block >= ? AND last_access_block < ?
 	`
 
-	rows, err := c.Query(ctx, query, expBlock)
+	rows, err := c.Query(ctx, query, startBlock, endBlock)
 	if err != nil {
 		return err
 	}
@@ -140,13 +140,13 @@ func (c *Client) ExecOnExpiredAccounts(ctx context.Context, expBlock uint64, exe
 	return nil
 }
 
-func (c *Client) ExecOnExpiredSlots(ctx context.Context, expBlock uint64, execFn func(address, slot string)) error {
+func (c *Client) ExecOnExpiredSlots(ctx context.Context, startBlock, endBlock uint64, execFn func(address, slot string)) error {
 	query := `
 		SELECT address, slot_key FROM default.storage_last_access FINAL
-		WHERE last_access_block < ? AND is_deleted = false
+		WHERE last_access_block >= ? AND last_access_block < ? AND is_deleted = false
 	`
 
-	rows, err := c.Query(ctx, query, expBlock)
+	rows, err := c.Query(ctx, query, startBlock, endBlock)
 	if err != nil {
 		return err
 	}
